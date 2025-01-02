@@ -1,19 +1,27 @@
 {
     "name": "drupal/phpunit",
     "type": "project",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "require": {
         "composer/installers": "^2",
         "drupal/core-composer-scaffold": "^11",
-        "drupal/core-recommended": "^11"
+        "drupal/core-recommended": "^11",
+        "custom/rsvplist": "1.0.0"
     },
     "require-dev": {
         "drupal/core-dev": "^11",
         "drush/drush": "^13"
     },
-    "scripts": {
-        "post-install-cmd": "./vendor/bin/drush site:install -y"
-    },
+    "repositories": [
+        {
+            "type": "composer",
+            "url": "https://packages.drupal.org/8"
+        },
+        {
+            "type": "path",
+            "url": "./lib/modules/*"
+        }
+    ],
     "extra": {
         "drupal-scaffold": {
             "locations": {
@@ -21,7 +29,8 @@
             }
         },
         "installer-paths": {
-            "web/core": ["type:drupal-core"]
+            "web/core": ["type:drupal-core"],
+            "web/modules/custom/{$name}": ["type:drupal-custom-module"]
         }
     },
     "config": {

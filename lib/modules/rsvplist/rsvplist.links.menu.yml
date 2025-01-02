@@ -1,0 +1,6 @@
+resvplist.report_link:
+  title: List of RSVP submissions
+  description: View listing of RSVPs
+  route_name: rsvplist.report
+  parent: system.admin_reports #/admin/reports
+  weight: -5
