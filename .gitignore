@@ -1,6 +1,7 @@
 /vendor/
 /web/
 /recipes/
+/recipes/
 /.editorconfig
 /.gitattributes
 composer.lock
