@@ -1,11 +1,13 @@
 # Requisitos
+
 - ddev
 
 # Instalación
-1. ddev start
-2. ddev composer install
-3. ddev drush site:install -y
-4. /vendor/bin/drush en rsvplist -y
+
+2. ddev start
+3. ddev composer install
+5. ddev drush site:install -y
+6. ddev drush en rsvplist -y
 
 # Conocimento básico
 
@@ -21,6 +23,7 @@ Lanzar PHPUnit: __ddev exec ./vendor/bin/phpunit__
 
 Clase padre: __BrowserTestBase__
 Elementos mínimos del test funcional
+
 - Módulos a instalar: propiedad de clase $modules
 - Tema usado: propiedad de clase $defaultTheme
 - Un test.

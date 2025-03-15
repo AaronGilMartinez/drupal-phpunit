@@ -11,4 +11,11 @@
     <!-- Example BROWSERTEST_OUTPUT_DIRECTORY value: /path/to/webroot/sites/simpletest/browser_output -->
     <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="browser_output"/>
   </php>
+
+  <testsuites>
+    <testsuite name="RSVP">
+      <directory>lib/modules/rsvplist</directory>
+    </testsuite>
+  </testsuites>
+
 </phpunit>
