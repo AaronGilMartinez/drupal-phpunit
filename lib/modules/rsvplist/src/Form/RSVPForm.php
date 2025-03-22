@@ -7,36 +7,32 @@
 
 namespace Drupal\rsvplist\Form;
 
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Ajax\AjaxFormHelperTrait;
+use Drupal\Core\Ajax\AjaxHelperTrait;
+use Drupal\Core\Ajax\AjaxResponse;
+use Drupal\Core\Ajax\RedirectCommand;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
 
 class RSVPForm extends FormBase {
 
+  use AjaxHelperTrait;
+  use AjaxFormHelperTrait;
+
   /**
    * {@inheritdoc}
    */
-  public function getFormId()
-  {
+  public function getFormId() {
     return 'rsvplist_email_form';
   }
 
   /**
    * {@inheritdoc}
    */
-  public function buildForm(array $form, FormStateInterface $form_state, NodeInterface $node = NULL) {
-    // Some pages may not be nodes though and $node will be NULL on those pages.
-    // If a node was loaded, get the node id.
-    if ( !(is_null($node)) ) {
-      $nid = $node->id();
-    }
-    else {
-      // If a node could not be loaded, default to 0;
-      $nid = 0;
-    }
-
-    // Establish the $form render array. It has an email text field, a submit button,
-    // and a hidden field containing the node ID.
+  public function buildForm(array $form, FormStateInterface $form_state, ?NodeInterface $node = NULL) {
     $form['email'] = [
       '#type' => 'textfield',
       '#title' => t('Email address'),
@@ -44,14 +40,32 @@ class RSVPForm extends FormBase {
       '#description' => t("We will send updates to the email address you provide."),
       '#required' => TRUE,
     ];
+
+    $form['nid'] = [
+      '#type' => 'entity_autocomplete',
+      '#target_type' => 'node',
+      '#title' => t('Node'),
+      '#required' => TRUE,
+    ];
+
     $form['submit'] = [
       '#type' => 'submit',
       '#value' => t('RSVP'),
     ];
-    $form['nid'] = [
-      '#type' => 'hidden',
-      '#value' => $node->id(),
-    ];
+
+    // Module library.
+    $form['#attached']['library'][] = 'core/drupal.ajax';
+
+    if ($this->isAjax()) {
+      // Due to https://www.drupal.org/node/2897377 we have to declare a fixed
+      // ID for the form.
+      // Since only one modal can be opened at the time, we can rely on the
+      // form ID as HTML ID.
+      // @todo Remove this workaround once https://www.drupal.org/node/2897377
+      //   is fixed.
+      $form['#id'] = Html::getId($form_state->getBuildInfo()['form_id']);
+      $form['submit']['#ajax'] = ['callback' => '::ajaxSubmit'];
+    }
 
     return $form;
   }
@@ -130,5 +144,26 @@ class RSVPForm extends FormBase {
       );
     }
 
+    $form_state->setRedirectUrl(Url::fromRoute('<front>'));
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  protected function successfulAjaxSubmit(array $form, FormStateInterface $form_state)
+  {
+    // We need to retrieve the redirect URL set in ::formSubmit(), but
+    // the getRedirect() method will return false if redirects are disabled.
+    // Form redirects are normally disabled during AJAX requests by the form
+    // builder.
+    // @see \Drupal\Core\Form\FormBuilder::buildForm()
+    $is_redirect_disabled = $form_state->isRedirectDisabled();
+    $form_state->disableRedirect(FALSE);
+    $redirect = $form_state->getRedirect();
+    $form_state->disableRedirect($is_redirect_disabled);
+    $response = new AjaxResponse();
+    $url = new RedirectCommand($redirect->toString());
+
+    return $response->addCommand($url);
   }
 }

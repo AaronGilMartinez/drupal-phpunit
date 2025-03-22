@@ -4,6 +4,7 @@
 
 # Instalación
 
+1. ddev add-on get ddev/ddev-selenium-standalone-chrome
 2. ddev start
 3. ddev composer install
 5. ddev drush site:install -y
@@ -19,7 +20,7 @@
 
 Lanzar PHPUnit: __ddev exec ./vendor/bin/phpunit__
 
-# Test functionales
+## Test functionales
 
 Clase padre: __BrowserTestBase__
 Elementos mínimos del test funcional
@@ -30,3 +31,15 @@ Elementos mínimos del test funcional
 - Una aserción: al menos hay que llamar al método Assert() una vez.
 
 $this->assertSession() para comprobar elementos en la página!
+
+## Test functionales javasctipt
+
+Clase padre: __WebDriverTestBase__
+Elementos mínimos del test funcional
+
+- Módulos a instalar: propiedad de clase $modules
+- Tema usado: propiedad de clase $defaultTheme
+- Un test.
+- Una aserción: al menos hay que llamar al método Assert() una vez.
+
+Cuidado con los elementos que requieren ser visibles o no aparecen/desaparecen de forma inmediata!

@@ -1,4 +1,4 @@
-<phpunit bootstrap="web/core/tests/bootstrap.php">
+<phpunit bootstrap="web/core/tests/bootstrap.php" backupGlobals="true" colors="true" cacheResult="false">
   <php>
     <!-- Set error reporting to E_ALL. -->
     <ini name="error_reporting" value="32767"/>
@@ -10,6 +10,7 @@
     <env name="SIMPLETEST_DB" value="mysql://db:db@db/db"/>
     <!-- Example BROWSERTEST_OUTPUT_DIRECTORY value: /path/to/webroot/sites/simpletest/browser_output -->
     <env name="BROWSERTEST_OUTPUT_DIRECTORY" value="browser_output"/>
+    <env name="MINK_DRIVER_ARGS_WEBDRIVER" value='["chrome", {"browserName":"chrome"}, "${selenium.host}:${selenium.port}/wd/hub"]'/>
   </php>
 
   <testsuites>

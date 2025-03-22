@@ -5,3 +5,4 @@ description: Allows users to RSVP for Events.
 package: RSVP List
 dependencies:
  - drupal:node
+ - drupal:link
