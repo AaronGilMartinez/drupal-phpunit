@@ -7,20 +7,27 @@
 
 namespace Drupal\rsvplist\Form;
 
+use Drupal\Component\Utility\EmailValidatorInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\Core\Ajax\AjaxFormHelperTrait;
 use Drupal\Core\Ajax\AjaxHelperTrait;
 use Drupal\Core\Ajax\AjaxResponse;
 use Drupal\Core\Ajax\RedirectCommand;
+use Drupal\Core\DependencyInjection\AutowireTrait;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Drupal\Core\Session\AccountProxyInterface;
 use Drupal\Core\Url;
 use Drupal\node\NodeInterface;
+use Drupal\rsvplist\Exception\RsvpListException;
+use Drupal\rsvplist\ListManagerInterface;
+use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 class RSVPForm extends FormBase {
 
   use AjaxHelperTrait;
   use AjaxFormHelperTrait;
+  use AutowireTrait;
 
   /**
    * {@inheritdoc}
@@ -28,6 +35,13 @@ class RSVPForm extends FormBase {
   public function getFormId() {
     return 'rsvplist_email_form';
   }
+
+  public function __construct(
+    protected AccountProxyInterface $currentUser,
+    #[Autowire(service: 'rsvplist.list_manager')]
+    protected ListManagerInterface $listManager,
+    protected EmailValidatorInterface $email_validator,
+  ) {}
 
   /**
    * {@inheritdoc}
@@ -75,7 +89,7 @@ class RSVPForm extends FormBase {
    */
   public function validateForm(array &$form, FormStateInterface $form_state) {
     $value = $form_state->getValue('email');
-    if ( !(\Drupal::service('email.validator')->isValid($value)) ) {
+    if ( !($this->email_validator->isValid($value)) ) {
       $form_state->setErrorByName(
         'email',
         $this->t('It appears that %mail is not a valid email. Please try again',['%mail' => $value])
@@ -91,54 +105,21 @@ class RSVPForm extends FormBase {
       // Begin Phase 1: initiate variables to save.
 
       // Get current user ID.
-      $uid = \Drupal::currentUser()->id();
-
+      $uid = $this->currentUser->id();
       // Obtain values as entered into the Form.
       $nid = $form_state->getValue('nid');
-      $email = $form_state->getValue('email');
+      $mail = $form_state->getValue('email');
 
-      $current_time = \Drupal::time()->getRequestTime();
-      // End Phase 1
-
-      // Begin Phase 2: Save the values to the database
-
-      // Start to build a query builder object $query.
-      // https://www.drupal.org/docs/8/api/database-api/insert-queries
-      $query = \Drupal::database()->insert('rsvplist');
-
-      // Specify the fields that the query will insert into.
-      $query->fields([
-        'uid',
-        'nid',
-        'mail',
-        'created',
-      ]);
-
-      // Set the values of the fields we selected.
-      // Note that they must be in the same order as we defined them
-      // in the $query->fields([...]) above.
-      $query->values([
-        $uid,
-        $nid,
-        $email,
-        $current_time,
-      ]);
-
-      // Execute the query!
-      // Drupal handles the exact syntax of the query automatically!
-      $query->execute();
-      // End Phase 2
-
-      // Begin Phase 3: Display a success message
+      $this->listManager->add($nid, $uid, $mail);
 
       // Provide the form submitter a nice message.
-      \Drupal::messenger()->addMessage(
+      $this->messenger()->addMessage(
         t('Thank you for your RSVP, you are on the list for the event!')
       );
       // End Phase 3
     }
-    catch (\Exception $e) {
-      \Drupal::messenger()->addError(
+    catch (RsvpListException $e) {
+      $this->messenger()->addError(
         t('Unable to save RSVP settings at this time due to database error.
            Please try again.')
       );

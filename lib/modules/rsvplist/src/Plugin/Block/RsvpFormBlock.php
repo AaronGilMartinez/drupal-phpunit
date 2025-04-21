@@ -57,7 +57,7 @@ final class RsvpFormBlock extends BlockBase implements ContainerFactoryPluginInt
     // https://www.drupal.org/docs/develop/drupal-apis/ajax-api/ajax-dialog-boxes#s-link-to-a-modal-in-a-render-array
     return [
       '#type' => 'link',
-      '#title' => $this->t('Add to node RSVP list.'),
+      '#title' => $this->t('Add node to RSVP list.'),
       '#url' => Url::fromRoute('rsvplist.add'),
       '#ajax' => [
         'dialogType' => 'modal',

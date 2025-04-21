@@ -1,0 +1,4 @@
+services:
+  rsvplist.list_manager:
+    class: Drupal\rsvplist\ListManager
+    arguments: ['@database', '@datetime.time']

@@ -10,7 +10,8 @@ class RSVPFormBlockTest extends WebDriverTestBase {
    * {@inheritdoc}
    */
   protected static $modules = [
-    'rsvplist'
+    'rsvplist',
+    'block'
   ];
 
   /**
@@ -24,13 +25,41 @@ class RSVPFormBlockTest extends WebDriverTestBase {
    * @return void
    */
   public function testForm(): void {
-    // Place block.
+    // Enable page title to check current node page title.
+    $this->drupalPlaceBlock('page_title_block');
+    $this->drupalPlaceBlock('rsvplist_rsvp_form');
 
-    // Click link to open the form.
+    $this->createContentType([
+      'type' => 'page',
+      'name' => 'Page',
+    ]);
+    $node = $this->createNode(['type' => 'page']);
 
-    // Test form.
+    $this->drupalLogin($this->createUser(['view rsvplist']));
+    /** @var \Drupal\FunctionalJavascriptTests\WebDriverWebAssert $assert_session */
+    $assert_session = $this->assertSession();
 
-    // Check saved data.
+    $this->drupalGet($node->toUrl());
+    $assert_session->pageTextContains($node->getTitle());
+
+    // Click link to open the form and test submission.
+    $this->clickLink('Add node to RSVP list.');
+    $assert_session->assertWaitOnAjaxRequest();
+    $assert_session->pageTextContains('RSVP to this Event (Add)');
+    $assert_session->fieldExists('Email address')->setValue('example@mail.com');
+    $assert_session->fieldExists('Node')->setValue("{$node->label()} ({$node->id()})");
+    $assert_session->buttonExists('RSVP')->submit();
+    $assert_session->statusMessageContains('Thank you for your RSVP, you are on the list for the event!', 'status');
+    // @todo check redirection.
+
+    // Test form validation.
+    $this->drupalGet($node->toUrl());
+    $this->clickLink('Add node to RSVP list.');
+    $assert_session->assertWaitOnAjaxRequest();
+    $assert_session->pageTextContains('RSVP to this Event (Add)');
+    $assert_session->fieldExists('Email address')->setValue('example');
+    $assert_session->buttonExists('RSVP')->submit();
+    $assert_session->statusMessageContains('It appears that example is not a valid email. Please try again', 'error');
   }
 
 }

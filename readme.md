@@ -43,3 +43,13 @@ Elementos mínimos del test funcional
 - Una aserción: al menos hay que llamar al método Assert() una vez.
 
 Cuidado con los elementos que requieren ser visibles o no aparecen/desaparecen de forma inmediata!
+
+## Test Kernel
+
+Clase padre: __KernelTestBase__
+Elementos mínimos del test funcional
+
+- Un test.
+- Una aserción: al menos hay que llamar al método Assert() una vez.
+
+La instalación o el uso de ciertas funcionalidades, requerirá la instalación “manual” de módulos, entidades, schemas y configuraciones!

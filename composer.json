@@ -1,7 +1,7 @@
 {
     "name": "drupal/phpunit",
     "type": "project",
-    "minimum-stability": "stable",
+    "minimum-stability": "alpha",
     "require": {
         "composer/installers": "^2",
         "drupal/core-composer-scaffold": "^11",
@@ -10,7 +10,8 @@
     },
     "require-dev": {
         "drupal/core-dev": "^11",
-        "drush/drush": "^13"
+        "drush/drush": "^13",
+        "drupal/datetime_testing": "^1.0@beta"
     },
     "repositories": [
         {
@@ -30,7 +31,8 @@
         },
         "installer-paths": {
             "web/core": ["type:drupal-core"],
-            "web/modules/custom/{$name}": ["type:drupal-custom-module"]
+            "web/modules/custom/{$name}": ["type:drupal-custom-module"],
+            "web/modules/contrib/{$name}": ["type:drupal-module"]
         }
     },
     "config": {
