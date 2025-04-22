@@ -7,8 +7,9 @@
 1. ddev add-on get ddev/ddev-selenium-standalone-chrome
 2. ddev start
 3. ddev composer install
-5. ddev drush site:install -y
-6. ddev drush en rsvplist -y
+4. ddev drush site:install -y
+5. ddev drush en rsvplist -y
+5. ddev drush recipe ../recipes/events -v
 
 # Conocimento básico
 
@@ -53,3 +54,15 @@ Elementos mínimos del test funcional
 - Una aserción: al menos hay que llamar al método Assert() una vez.
 
 La instalación o el uso de ciertas funcionalidades, requerirá la instalación “manual” de módulos, entidades, schemas y configuraciones!
+
+## Test ExistingSite
+
+Librería: https://gitlab.com/weitzman/drupal-test-traits
+Clase padre:
+- Test functionales: __ExistingSiteBase__
+- Test Javascript: __ExistingSiteSelenium2DriverTestBase__
+
+NO hace falta declarar módulos o tema a instalar dado que el los tests correrán sobre el sitio.
+
+Los test se realizan sobre la base de datos del sitio, lo que conlleva limpieza de los datos después de los test!
+

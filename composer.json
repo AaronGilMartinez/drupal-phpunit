@@ -6,12 +6,14 @@
         "composer/installers": "^2",
         "drupal/core-composer-scaffold": "^11",
         "drupal/core-recommended": "^11",
-        "custom/rsvplist": "1.0.0"
+        "custom/rsvplist": "1.0.0",
+        "drupal/events": "^1.1"
     },
     "require-dev": {
         "drupal/core-dev": "^11",
         "drush/drush": "^13",
-        "drupal/datetime_testing": "^1.0@beta"
+        "drupal/datetime_testing": "^1.0@beta",
+        "weitzman/drupal-test-traits": "^2"
     },
     "repositories": [
         {

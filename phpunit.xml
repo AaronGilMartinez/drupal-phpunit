@@ -7,6 +7,9 @@
   </php>
 
   <testsuites>
+  <testsuite name="Site">
+      <directory>tests</directory>
+    </testsuite>
     <testsuite name="RSVP">
       <directory>lib/modules/rsvplist</directory>
     </testsuite>

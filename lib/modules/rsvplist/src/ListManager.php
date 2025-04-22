@@ -11,7 +11,7 @@ use Drupal\rsvplist\Exception\RsvpListException;
 /**
  * @todo Add class description.
  */
-final class ListManager implements ListManagerInterface {
+class ListManager implements ListManagerInterface {
 
   /**
    * Constructs a ListManager object.
